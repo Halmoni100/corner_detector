@@ -2,4 +2,5 @@
 
 #include <opencv2/opencv.hpp>
 
-std::pair<float, float> compute_eigenvalues_of_gradient_covariance(const cv::Mat& image);
+std::pair<float, float> getEigenvaluesOfGradientCovariance(const cv::Mat& image_gray);
+float getHarrisResponse(const cv::Mat& image_gray);

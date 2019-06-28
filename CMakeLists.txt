@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.14.5)
 project(corner_detector)
 
-find_package( OpenCV REQUIRED )
-find_package( Boost REQUIRED COMPONENTS unit_test_framework )
+find_package( OpenCV 4.10 REQUIRED )
+find_package( Boost 1.70 REQUIRED COMPONENTS unit_test_framework )
+find_pacakge( Eigen3 3.3 REQUIRED )
 
 include_directories(
   .
@@ -12,6 +13,7 @@ include_directories(
 )
 
 add_library(corner_detector corner_detector.cpp)
+target_include_directories(corner_detector PRIVATE 
 target_link_libraries(corner_detector ${OpenCV_LIBS})
 
 add_executable(test1 test/check_eigenvalues.cpp)
