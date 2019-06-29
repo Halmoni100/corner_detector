@@ -1,20 +1,42 @@
 cmake_minimum_required(VERSION 3.14.5)
-project(corner_detector)
+project(cornerDetector)
 
-find_package( OpenCV 4.10 REQUIRED )
+set( CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmakemodules )
+
+find_package( OpenCV 4.1.0 REQUIRED )
 find_package( Boost 1.70 REQUIRED COMPONENTS unit_test_framework )
-find_pacakge( Eigen3 3.3 REQUIRED )
+find_package( Eigen3 3.3 REQUIRED )
 
-include_directories(
+add_library(cornerDetector cornerDetector.cpp)
+target_include_directories(cornerDetector PRIVATE
   .
-  $ENV{HOME}/cots/eigen/eigen-eigen-323c052e1731
-  ${OpenCV_INCLUDE_DIRS}   
-  ${Boost_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIR}
+  ${OpenCV_INCLUDE_DIRS}
+)  
+target_link_libraries(cornerDetector
+	${OpenCV_LIBS}
 )
 
-add_library(corner_detector corner_detector.cpp)
-target_include_directories(corner_detector PRIVATE 
-target_link_libraries(corner_detector ${OpenCV_LIBS})
+add_executable(test1 test/checkEigenvalues.cpp)
+target_include_directories(test1 PRIVATE
+	.
+	${OpenCV_INCLUDE_DIRS}
+	${Boost_INCLUDE_DIRS}
+)
+target_link_libraries(test1
+	cornerDetector
+	${OpenCV_LIBS}
+	${Boost_LIBRARIES}
+)
 
-add_executable(test1 test/check_eigenvalues.cpp)
-target_link_libraries(test1 corner_detector ${OpenCV_LIBS} ${Boost_LIBRARIES})
+add_executable(test2 test/checkHarrisResponse.cpp)
+target_include_directories(test2 PRIVATE
+	.
+	${OpenCV_INCLUDE_DIRS}
+	${Boost_INCLUDE_DIRS}
+)
+target_link_libraries(test2
+	cornerDetector
+	${OpenCV_LIBS}
+	${Boost_LIBRARIES}
+)

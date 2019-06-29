@@ -2,25 +2,8 @@
 #include <opencv2/imgproc.hpp>
 #include <Eigen/Dense>
 #include <Eigen/Eigenvalues>
-#include "corner_detector.h"
+#include "cornerDetector.h"
 
-std::pair<float, float> getEigenvaluesOfGradientCovariance(const cv::Mat& image_gray)
-{
-  Eigen::Matrix2f grad_covariance = getGradientCovariance(image_gray);
-  Eigen::SelfAdjointEigenSolver<Eigen::Matrix2f> eigensolver;
-  eigensolver.compute(grad_covariance);
-
-  std::pair<float, float> eigenvalues(eigensolver.eigenvalues()(0), eigensolver.eigenvalues()(1));
-
-  return eigenvalues;
-}
-
-float getHarrisResponse(const cv::Mat& image_gray)
-{
-  Eigen::Matrix2f grad_covariance = getGradientCovariance(image_gray);
-  
-  float determinant = grad_covariance.
-}
 Eigen::Matrix2f getGradientCovariance(const cv::Mat& image_gray)
 {
   cv::Mat grad_x, grad_y;
@@ -40,4 +23,25 @@ Eigen::Matrix2f getGradientCovariance(const cv::Mat& image_gray)
   grad_covariance << E_x_square, E_x_E_y, E_x_E_y, E_y_square;
   
   return grad_covariance;
+}
+
+std::pair<float, float> getEigenvaluesOfGradientCovariance(const cv::Mat& image_gray)
+{
+  Eigen::Matrix2f grad_covariance = getGradientCovariance(image_gray);
+  Eigen::SelfAdjointEigenSolver<Eigen::Matrix2f> eigensolver;
+  eigensolver.compute(grad_covariance);
+
+  std::pair<float, float> eigenvalues(eigensolver.eigenvalues()(0), eigensolver.eigenvalues()(1));
+
+  return eigenvalues;
+}
+
+float getHarrisResponse(const cv::Mat& image_gray, float k)
+{
+  Eigen::Matrix2f grad_covariance = getGradientCovariance(image_gray);
+  
+  float det = grad_covariance.determinant();
+	float trace = grad_covariance.trace();
+
+  return det - k * std::pow(trace, 2); 
 }
